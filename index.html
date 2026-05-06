@@ -481,16 +481,33 @@ async function connectSheet() {
   }
 }
 
-async function pushToSheet(action, payload) {
-  if (!sheetUrl) return;
+async function sheetWrite(action, payload) {
+  if (!sheetUrl) return null;
   try {
-    await fetch(sheetUrl, {
+    setSync('pulse', 'Saving…');
+    const res = await fetch(sheetUrl, {
       method: 'POST',
-      mode: 'no-cors',
       body: JSON.stringify({ action, ...payload }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'text/plain' }
     });
-  } catch(e) { console.warn('Sheet push failed', e); }
+    const updated = await res.json();
+    // Sheet returns fresh data — update local state from it
+    items = updated.map(r => ({
+      id: r.id,
+      name: String(r.name || ''),
+      location: String(r.location || ''),
+      category: String(r.category || 'other'),
+      quantity: parseInt(r.quantity) || 1,
+      notes: String(r.notes || '')
+    }));
+    saveLocal();
+    setSync('on', 'Sheet connected');
+    return true;
+  } catch(e) {
+    setSync('', 'Save failed — check connection');
+    console.warn('Sheet write failed', e);
+    return false;
+  }
 }
 
 // ── RENDER ───────────────────────────────────────────────────────────────
@@ -604,24 +621,24 @@ async function saveItem() {
     quantity: parseInt(document.getElementById('f-qty').value) || 1,
     notes: document.getElementById('f-notes').value.trim()
   };
+
+  // Optimistically update local state first so UI feels instant
   if (editingId !== null) {
-    // Edit existing
     const idx = items.findIndex(i => i.id === editingId);
-    if (idx !== -1) {
-      items[idx] = { ...items[idx], ...fields };
-      saveLocal();
-      closeModal();
-      render();
-      await pushToSheet('update', { id: editingId, ...fields });
-    }
+    if (idx !== -1) items[idx] = { ...items[idx], ...fields };
   } else {
-    // Add new
-    const item = { id: nextId++, ...fields };
-    items.push(item);
-    saveLocal();
-    closeModal();
-    render();
-    await pushToSheet('add', item);
+    items.push({ id: nextId++, ...fields });
+  }
+  saveLocal();
+  closeModal();
+  render();
+
+  // Then sync to sheet — sheet response overwrites local with authoritative data
+  if (sheetUrl) {
+    const action = editingId !== null ? 'update' : 'add';
+    const payload = editingId !== null ? { id: editingId, ...fields } : fields;
+    await sheetWrite(action, payload);
+    render(); // re-render with sheet's confirmed data
   }
 }
 
@@ -629,10 +646,15 @@ async function deleteItem(id) {
   if (!isAdmin()) return;
   if (!confirm('Remove this item?')) return;
   const item = items.find(i => i.id === id);
+  // Optimistic local delete
   items = items.filter(i => i.id !== id);
   saveLocal();
   render();
-  if (item) await pushToSheet('delete', { id: item.id });
+  // Sync to sheet
+  if (sheetUrl && item) {
+    await sheetWrite('delete', { id: item.id });
+    render();
+  }
 }
 
 // ── IMPORT ────────────────────────────────────────────────────────────────
