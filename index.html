@@ -115,8 +115,12 @@ select:focus{border-color:var(--accent);}
 .p-other{background:#f0edf8;color:#4a2a7a;}
 .c-qty{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);}
 .c-notes{font-size:12px;color:var(--muted);margin-top:8px;border-top:1px solid var(--border);padding-top:8px;line-height:1.4;}
-.del{position:absolute;top:10px;right:10px;width:22px;height:22px;border:none;background:none;cursor:pointer;color:var(--border);font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all 0.15s;}
+.card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px;}
+.del,.edt{width:22px;height:22px;border:none;background:none;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all 0.15s;}
+.del{color:var(--border);}
 .del:hover{color:#c0392b;background:#fdf0ef;}
+.edt{color:var(--border);}
+.edt:hover{color:var(--accent);background:var(--accent-bg);}
 .empty{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--muted);}
 
 /* PANELS */
@@ -257,6 +261,10 @@ function doPost(e) {
     sheet.appendRow([p.name, p.location, p.category, p.quantity, p.notes || '']);
   if (p.action === 'delete')
     sheet.deleteRow(p.id);
+  if (p.action === 'update') {
+    const row = p.id;
+    sheet.getRange(row, 1, 1, 5).setValues([[p.name, p.location, p.category, p.quantity, p.notes || '']]);
+  }
   return ContentService.createTextOutput('ok');
 }</pre>
       </details>
@@ -525,8 +533,8 @@ function render() {
 
   document.getElementById('grid').innerHTML = f.length ? f.map(item => `
     <div class="card">
-      ${isAdmin() ? `<button class="del" onclick="deleteItem(${item.id})">×</button>` : ''}
-      <div class="c-name">${item.name}</div>
+      ${isAdmin() ? `<div class="card-actions"><button class="edt" onclick="openEditModal(${item.id})" title="Edit">✎</button><button class="del" onclick="deleteItem(${item.id})" title="Delete">×</button></div>` : ''}
+      <div class="c-name" style="padding-right:${isAdmin()?'54px':'4px'}">${item.name}</div>
       <div class="c-loc">${item.location}</div>
       <div class="c-foot">
         <span class="pill p-${item.category}">${item.category}</span>
@@ -550,8 +558,12 @@ function setLoc(loc) {
 }
 
 // ── CRUD ─────────────────────────────────────────────────────────────────
+let editingId = null;
+
 function openModal() {
   if (!isAdmin()) return;
+  editingId = null;
+  document.querySelector('#modal h2').textContent = 'Add item';
   document.getElementById('f-name').value = '';
   document.getElementById('f-loc').value = activeLoc || '';
   document.getElementById('f-qty').value = 1;
@@ -560,24 +572,57 @@ function openModal() {
   document.getElementById('modal').classList.add('open');
   setTimeout(() => document.getElementById('f-name').focus(), 100);
 }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function openEditModal(id) {
+  if (!isAdmin()) return;
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  editingId = id;
+  document.querySelector('#modal h2').textContent = 'Edit item';
+  document.getElementById('f-name').value = item.name;
+  document.getElementById('f-loc').value = item.location;
+  document.getElementById('f-qty').value = item.quantity;
+  document.getElementById('f-cat').value = item.category;
+  document.getElementById('f-notes').value = item.notes || '';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingId = null;
+}
 
 async function saveItem() {
   if (!isAdmin()) return;
   const name = document.getElementById('f-name').value.trim();
   const location = document.getElementById('f-loc').value.trim();
   if (!name || !location) { alert('Name and location are required.'); return; }
-  const item = {
-    id: nextId++, name, location,
+  const fields = {
+    name, location,
     category: document.getElementById('f-cat').value,
     quantity: parseInt(document.getElementById('f-qty').value) || 1,
     notes: document.getElementById('f-notes').value.trim()
   };
-  items.push(item);
-  saveLocal();
-  closeModal();
-  render();
-  await pushToSheet('add', item);
+  if (editingId !== null) {
+    // Edit existing
+    const idx = items.findIndex(i => i.id === editingId);
+    if (idx !== -1) {
+      items[idx] = { ...items[idx], ...fields };
+      saveLocal();
+      closeModal();
+      render();
+      await pushToSheet('update', { id: editingId, ...fields });
+    }
+  } else {
+    // Add new
+    const item = { id: nextId++, ...fields };
+    items.push(item);
+    saveLocal();
+    closeModal();
+    render();
+    await pushToSheet('add', item);
+  }
 }
 
 async function deleteItem(id) {
