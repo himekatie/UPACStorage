@@ -3,137 +3,138 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Inventory</title>
+<title>UPAC Storage Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
   --ink: #111110;
   --paper: #f7f5f0;
-  --card: #ffffff;
+  --card: #fff;
   --border: #e2ded6;
   --muted: #999690;
-  --accent: #c8440a;
+  --accent: #9b1313;
   --accent-bg: #fdf1ec;
-  --green: #2d6a4f;
-  --green-bg: #eaf4ef;
-  --blue: #1a4a6e;
-  --blue-bg: #e8f1f8;
-  --gold: #7a5c00;
-  --gold-bg: #fdf6e0;
-  --r: 8px;
-  --r-sm: 5px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  --office: #1a4a6e;
+  --office-bg: #e8f1f8;
+  --cage: #2d6a4f;
+  --cage-bg: #eaf4ef;
+  --r: 8px; --r-sm: 5px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 14px rgba(0,0,0,0.04);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Lato',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5;}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity 0.4s;}
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:200;transition:opacity 0.35s;}
 #login-screen.hidden{opacity:0;pointer-events:none;}
-.login-box{width:360px;padding:2.5rem;}
-.login-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:3rem;}
-.login-logo span{color:white;}
-.login-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:white;margin-bottom:6px;letter-spacing:-0.5px;}
-.login-sub{font-size:14px;color:var(--muted);margin-bottom:2.5rem;}
-.login-field{margin-bottom:1rem;}
-.login-field label{display:block;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.login-field input{width:100%;padding:12px 14px;background:#1e1e1c;border:1px solid #333;border-radius:var(--r-sm);font-size:14px;color:white;font-family:inherit;outline:none;transition:border-color 0.15s;}
-.login-field input:focus{border-color:#555;}
-.login-btn{width:100%;margin-top:1.5rem;padding:13px;background:var(--accent);color:white;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;}
-.login-btn:hover{opacity:0.9;}
-.login-err{font-size:13px;color:#e07060;margin-top:12px;min-height:18px;}
+.lb{width:360px;padding:2.5rem;}
+.lb-logo{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:#555;margin-bottom:2.5rem;}
+.lb-logo em{color:#9b1313;font-style:normal;}
+.lb-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:white;margin-bottom:4px;letter-spacing:-0.5px;}
+.lb-sub{font-size:13px;color:#666;margin-bottom:2rem;}
+.lf label{display:block;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#555;margin-bottom:5px;margin-top:1rem;}
+.lf input{width:100%;padding:11px 13px;background:#1a1a18;border:1px solid #2e2e2c;border-radius:var(--r-sm);font-size:14px;color:white;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.lf input:focus{border-color:#555;}
+.lb-btn{width:100%;margin-top:1.5rem;padding:12px;background:var(--accent);color:white;border:none;border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;}
+.lb-btn:hover{opacity:0.88;}
+.lb-err{font-size:12px;color:#e07060;margin-top:10px;min-height:16px;}
 
-/* LAYOUT */
+/* ── LAYOUT ── */
 #app{display:none;}
-#app.visible{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+#app.visible{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
 
-/* SIDEBAR */
-.sidebar{background:var(--ink);color:white;padding:1.75rem 1.25rem;display:flex;flex-direction:column;gap:1.75rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
-.sb-logo{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
-.sb-logo span{color:white;}
-.sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#1e1e1c;border-radius:var(--r-sm);}
-.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
-.sb-uinfo{flex:1;min-width:0;}
-.sb-uname{font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-urole{font-size:11px;color:var(--muted);}
-.sb-logout{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px;transition:color 0.15s;}
-.sb-logout:hover{color:white;}
-.sb-sec{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#444;margin-bottom:6px;}
-.sb-nav{display:flex;flex-direction:column;gap:2px;}
-.sb-btn{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--r-sm);font-size:13px;color:#888;cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
-.sb-btn:hover{background:#1e1e1c;color:white;}
-.sb-btn.active{background:#2a2a28;color:white;font-weight:700;}
-.sb-cnt{font-family:'IBM Plex Mono',monospace;font-size:10px;background:#333;padding:2px 6px;border-radius:10px;color:#888;}
-.sb-btn.active .sb-cnt{background:#3a3a38;color:#aaa;}
-.sb-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;}
-.sb-status{display:flex;align-items:center;gap:7px;font-size:12px;color:#666;padding:4px 12px;}
-.dot{width:6px;height:6px;border-radius:50%;background:#444;flex-shrink:0;}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--ink);padding:1.5rem 1.125rem;display:flex;flex-direction:column;gap:1.5rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-brand{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#444;}
+.sb-brand em{color:var(--accent);font-style:normal;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:9px 11px;background:#1a1a18;border-radius:var(--r-sm);}
+.sb-av{width:27px;height:27px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.sb-ui{flex:1;min-width:0;}
+.sb-un{font-size:13px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-ur{font-size:11px;color:#555;}
+.sb-lo{background:none;border:none;color:#444;cursor:pointer;font-size:14px;padding:2px;transition:color 0.15s;}
+.sb-lo:hover{color:white;}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#333;margin-bottom:5px;padding:0 4px;}
+.sb-group{display:flex;flex-direction:column;gap:1px;}
+.sb-group-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 12px 3px;display:flex;align-items:center;gap:7px;}
+.sb-group-label.office{color:var(--office);}
+.sb-group-label.cage{color:var(--cage);}
+.sb-group-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;}
+.sb-group-label.office::before{background:var(--office);}
+.sb-group-label.cage::before{background:var(--cage);}
+.sb-btn{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-radius:var(--r-sm);font-size:13px;color:#666;cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.sb-btn:hover{background:#1a1a18;color:white;}
+.sb-btn.active{background:#252523;color:white;font-weight:700;}
+.sb-cnt{font-family:'IBM Plex Mono',monospace;font-size:10px;background:#222;padding:2px 6px;border-radius:8px;color:#555;}
+.sb-btn.active .sb-cnt{color:#888;}
+.sb-foot{margin-top:auto;display:flex;flex-direction:column;gap:7px;}
+.sb-sync{display:flex;align-items:center;gap:7px;font-size:12px;color:#444;padding:3px 12px;}
+.dot{width:6px;height:6px;border-radius:50%;background:#333;flex-shrink:0;}
 .dot.on{background:#4ade80;}
 .dot.pulse{background:#fbbf24;animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.sb-cxn{padding:9px 12px;background:transparent;border:1px solid #333;border-radius:var(--r-sm);font-size:12px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.5px;color:#888;cursor:pointer;transition:all 0.15s;text-align:left;width:100%;}
-.sb-cxn:hover{border-color:#666;color:white;}
+.sb-cxn{padding:8px 12px;background:transparent;border:1px solid #2a2a28;border-radius:var(--r-sm);font-size:11px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.5px;color:#555;cursor:pointer;transition:all 0.15s;text-align:left;width:100%;}
+.sb-cxn:hover{border-color:#555;color:white;}
 
-/* MAIN */
+/* ── MAIN ── */
 .main{padding:2rem 2.5rem;min-width:0;}
-.top-bar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap;}
-.pg-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.5px;}
-.pg-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+.top-bar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:1rem;flex-wrap:wrap;}
+.pg-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.4px;}
+.pg-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.loc-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px;margin-top:6px;}
+.loc-badge.office{background:var(--office-bg);color:var(--office);}
+.loc-badge.cage{background:var(--cage-bg);color:var(--cage);}
 
 /* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.75rem;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;box-shadow:var(--shadow);}
-.stat-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.stat-val{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:500;letter-spacing:-1px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:.875rem 1.125rem;box-shadow:var(--shadow);}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-val{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;letter-spacing:-1px;}
 
 /* CONTROLS */
 .controls{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;}
 .srch{flex:2;min-width:180px;position:relative;}
-.srch svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
-.srch input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;box-shadow:var(--shadow);}
+.srch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.srch input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;box-shadow:var(--shadow);}
 .srch input:focus{border-color:var(--accent);}
-select{padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;cursor:pointer;box-shadow:var(--shadow);}
-select:focus{border-color:var(--accent);}
+select{padding:9px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;cursor:pointer;box-shadow:var(--shadow);}
 
 /* BUTTONS */
-.btn-p{padding:10px 16px;background:var(--accent);color:white;border:none;border-radius:var(--r-sm);font-size:13px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:opacity 0.15s;white-space:nowrap;}
+.btn-p{padding:9px 15px;background:var(--accent);color:white;border:none;border-radius:var(--r-sm);font-size:13px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.3px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s;white-space:nowrap;}
 .btn-p:hover{opacity:0.88;}
-.btn-g{padding:10px 16px;background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;box-shadow:var(--shadow);}
+.btn-g{padding:9px 15px;background:var(--card);color:var(--muted);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap;box-shadow:var(--shadow);}
 .btn-g:hover{border-color:var(--ink);color:var(--ink);}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.125rem;box-shadow:var(--shadow);transition:border-color 0.15s,box-shadow 0.15s;position:relative;}
-.card:hover{border-color:#ccc;box-shadow:0 2px 12px rgba(0,0,0,0.1);}
-.c-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:5px;padding-right:28px;letter-spacing:-0.2px;}
-.c-loc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);background:var(--paper);display:inline-block;padding:3px 8px;border-radius:4px;margin-bottom:10px;}
-.c-foot{display:flex;justify-content:space-between;align-items:center;}
-.pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;}
-.p-tools{background:var(--green-bg);color:var(--green);}
-.p-supplies{background:var(--blue-bg);color:var(--blue);}
-.p-equipment{background:var(--gold-bg);color:var(--gold);}
-.p-other{background:#f0edf8;color:#4a2a7a;}
-.c-qty{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);}
-.c-notes{font-size:12px;color:var(--muted);margin-top:8px;border-top:1px solid var(--border);padding-top:8px;line-height:1.4;}
-.card-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px;}
-.del,.edt{width:22px;height:22px;border:none;background:none;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all 0.15s;}
-.del{color:var(--border);}
-.del:hover{color:#c0392b;background:#fdf0ef;}
-.edt{color:var(--border);}
+.card:hover{border-color:#ccc;box-shadow:0 2px 12px rgba(0,0,0,0.09);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.c-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;letter-spacing:-0.2px;line-height:1.3;flex:1;}
+.card-acts{display:flex;gap:3px;flex-shrink:0;}
+.edt,.del{width:22px;height:22px;border:none;background:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all 0.15s;color:var(--border);}
 .edt:hover{color:var(--accent);background:var(--accent-bg);}
+.del:hover{color:#c0392b;background:#fdf0ef;}
+.c-loc{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.loc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.loc-dot.office{background:var(--office);}
+.loc-dot.cage{background:var(--cage);}
+.c-loc-name{font-size:12px;font-weight:700;color:var(--muted);}
+.c-subloc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);background:var(--paper);display:inline-block;padding:2px 7px;border-radius:4px;margin-bottom:10px;}
+.c-notes{font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px;margin-top:4px;line-height:1.4;}
 .empty{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--muted);}
 
 /* PANELS */
 .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;box-shadow:var(--shadow);display:none;}
 .panel.open{display:block;}
-.panel h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;}
-.panel p{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.7;}
+.panel h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;}
+.panel p{font-size:13px;color:var(--muted);margin-bottom:1.125rem;line-height:1.7;}
 .panel p code{font-family:'IBM Plex Mono',monospace;background:var(--paper);padding:1px 5px;border-radius:3px;font-size:12px;}
 .prow{display:flex;gap:10px;flex-wrap:wrap;}
-.prow input{flex:1;min-width:200px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);outline:none;}
+.prow input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);outline:none;}
 .prow input:focus{border-color:var(--accent);background:var(--card);}
-.pmsg{font-size:12px;padding:8px 12px;border-radius:var(--r-sm);margin-top:10px;display:none;}
-.pmsg.ok{background:var(--green-bg);color:var(--green);display:block;}
+.pmsg{font-size:12px;padding:7px 11px;border-radius:var(--r-sm);margin-top:10px;display:none;}
+.pmsg.ok{background:var(--cage-bg);color:var(--cage);display:block;}
 .pmsg.err{background:#fdf0ef;color:#c0392b;display:block;}
 textarea{width:100%;height:90px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--paper);color:var(--ink);resize:vertical;outline:none;margin-bottom:8px;}
 textarea:focus{border-color:var(--accent);}
@@ -143,18 +144,22 @@ details pre{margin-top:10px;padding:14px;background:var(--paper);border-radius:v
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.2s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--card);border-radius:var(--r);padding:2rem;width:100%;max-width:460px;transform:translateY(10px);transition:transform 0.2s;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal{background:var(--card);border-radius:var(--r);padding:1.875rem;width:100%;max-width:480px;transform:translateY(8px);transition:transform 0.2s;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
 .overlay.open .modal{transform:translateY(0);}
-.modal h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:1.5rem;}
-.fg{margin-bottom:1rem;}
-.fg label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.fg input,.fg select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--paper);color:var(--ink);outline:none;}
-.fg input:focus,.fg select:focus{border-color:var(--accent);background:var(--card);}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.mactions{display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;}
+.modal h2{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:1.375rem;}
+.fg{margin-bottom:.875rem;}
+.fg label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;font-family:inherit;background:var(--paper);color:var(--ink);outline:none;transition:border-color 0.15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);background:var(--card);}
+.fg textarea{height:60px;resize:vertical;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mactions{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;}
+.top-acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.view-tag{font-size:13px;color:var(--muted);}
 
-.top-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-.view-tag{font-size:13px;color:var(--muted);padding:10px 4px;}
+/* location type color strip on card left edge */
+.card.office-card{border-left:3px solid var(--office);}
+.card.cage-card{border-left:3px solid var(--cage);}
 
 @media(max-width:680px){
   #app.visible{grid-template-columns:1fr;}
@@ -166,55 +171,61 @@ details pre{margin-top:10px;padding:14px;background:var(--paper);border-radius:v
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">Inv<span>·</span>OS</div>
-    <div class="login-title">Welcome back.</div>
-    <div class="login-sub">Sign in to access your inventory.</div>
-    <div class="login-field">
+  <div class="lb">
+    <div class="lb-logo">UPAC <em>·</em> Storage</div>
+    <div class="lb-title">Storage Inventory</div>
+    <div class="lb-sub">Sign in to access your inventory.</div>
+    <div class="lf">
       <label>Username</label>
       <input type="text" id="l-user" placeholder="Enter username" autocomplete="username"/>
-    </div>
-    <div class="login-field">
       <label>Password</label>
       <input type="password" id="l-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/>
     </div>
-    <button class="login-btn" onclick="doLogin()">Sign in →</button>
-    <div class="login-err" id="login-err"></div>
+    <button class="lb-btn" onclick="doLogin()">Sign in →</button>
+    <div class="lb-err" id="login-err"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
   <aside class="sidebar">
-    <div class="sb-logo">Inv<span>·</span>OS</div>
+    <div class="sb-brand">UPAC <em>·</em> Storage</div>
 
     <div class="sb-user">
-      <div class="sb-avatar" id="sb-av">?</div>
-      <div class="sb-uinfo">
-        <div class="sb-uname" id="sb-uname">—</div>
-        <div class="sb-urole" id="sb-urole">—</div>
+      <div class="sb-av" id="sb-av">?</div>
+      <div class="sb-ui">
+        <div class="sb-un" id="sb-un">—</div>
+        <div class="sb-ur" id="sb-ur">—</div>
       </div>
-      <button class="sb-logout" onclick="doLogout()" title="Sign out">↩</button>
+      <button class="sb-lo" onclick="doLogout()" title="Sign out">↩</button>
     </div>
 
+    <!-- All items -->
     <div>
       <div class="sb-sec">Browse</div>
-      <div class="sb-nav">
-        <button class="sb-btn active" onclick="setLoc('')" data-loc="">
+      <div class="sb-group">
+        <button class="sb-btn active" onclick="setFilter('','',this)" data-loc="" data-subloc="">
           All items <span class="sb-cnt" id="cnt-all">0</span>
         </button>
       </div>
     </div>
 
+    <!-- UPAC Room 3410 as office -->
     <div>
-      <div class="sb-sec">Locations</div>
-      <div class="sb-nav" id="loc-nav"></div>
+      <div class="sb-group-label office">UPAC Room 3410</div>
+      <div class="sb-group" id="nav-office"></div>
+    </div>
+
+    <!-- Cages section -->
+    <div>
+      <div class="sb-group-label cage">Storage Cages</div>
+      <div class="sb-group" id="nav-cages"></div>
     </div>
 
     <div class="sb-foot">
-      <div class="sb-status">
+      <div class="sb-sync">
         <div class="dot" id="sync-dot"></div>
         <span id="sync-lbl">Local mode</span>
       </div>
@@ -227,11 +238,8 @@ details pre{margin-top:10px;padding:14px;background:var(--paper);border-radius:v
     <div class="panel" id="setup-panel">
       <h3>Connect to Google Sheets</h3>
       <p>
-        Shares live data across all users. Do this once.<br><br>
-        1. Create a Google Sheet with columns: <code>Name, Location, Category, Quantity, Notes</code><br>
-        2. Go to <strong>Extensions → Apps Script</strong>, paste the script below<br>
-        3. Click <strong>Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone → Deploy</strong><br>
-        4. Copy the <code>/exec</code> URL and paste it here.
+        Paste your Apps Script <code>/exec</code> URL below. Deploy as a Web App: <strong>Execute as: Me</strong> · <strong>Who has access: Anyone</strong>.<br><br>
+        Your sheet layout should be: <code>Cage W | Shelf | Note | Cage X | Shelf | Note | Cage Y | Shelf | Note | General Cage | Shelf | Note | UPAC Room 3410 | Shelf | Note</code> — exactly as it is now, starting at row 1 headers, data from row 2.
       </p>
       <div class="prow">
         <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec"/>
@@ -241,31 +249,107 @@ details pre{margin-top:10px;padding:14px;background:var(--paper);border-radius:v
       <div class="pmsg" id="setup-msg"></div>
       <details>
         <summary>Show Apps Script code to paste →</summary>
-        <pre>function doGet(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const data = sheet.getDataRange().getValues();
-  const headers = data[0];
-  const rows = data.slice(1).map((r, i) => ({
-    id: i + 2,
-    ...Object.fromEntries(headers.map((h, j) => [h.toLowerCase(), r[j]]))
-  }));
-  return ContentService
-    .createTextOutput(JSON.stringify(rows))
-    .setMimeType(ContentService.MimeType.JSON);
+        <pre>// Sheet layout (columns A–L):
+// Cage W: Item(A), Shelf(B), Note(C)
+// Cage X: Item(D), Note(E)
+// Cage Y: Item(F), Note(G)
+// General Cage: Item(H), Note(I)
+// UPAC Room 3410: Item(J), SubLocation(K), Note(L)
+// Row 1 = headers, data starts row 2
+
+const SECTIONS = [
+  { name: 'Cage W',         cols: 3, fields: ['name','shelf','note']        },
+  { name: 'Cage X',         cols: 2, fields: ['name','note']                },
+  { name: 'Cage Y',         cols: 2, fields: ['name','note']                },
+  { name: 'General Cage',   cols: 2, fields: ['name','note']                },
+  { name: 'UPAC Room 3410', cols: 3, fields: ['name','sublocation','note']  },
+];
+const DATA_START_ROW = 2;
+
+// Pre-compute starting column (1-based) for each section
+function getSectionStartCols() {
+  let col = 1;
+  return SECTIONS.map(s => { const c = col; col += s.cols; return c; });
+}
+
+function getSheet() {
+  return SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+}
+
+function readAllItems() {
+  const sheet = getSheet();
+  const lastRow = sheet.getLastRow();
+  if (lastRow < DATA_START_ROW) return [];
+  const startCols = getSectionStartCols();
+  const totalCols = startCols[startCols.length - 1] + SECTIONS[SECTIONS.length - 1].cols - 1;
+  const numRows = lastRow - DATA_START_ROW + 1;
+  const data = sheet.getRange(DATA_START_ROW, 1, numRows, totalCols).getValues();
+  const items = [];
+  SECTIONS.forEach((sec, si) => {
+    const colOffset = startCols[si] - 1; // 0-based
+    data.forEach((row, ri) => {
+      const name = row[colOffset];
+      if (name && name.toString().trim() !== '') {
+        const item = { id: si + '_' + ri, section: si, rowIndex: ri, location: sec.name };
+        sec.fields.forEach((f, fi) => {
+          item[f] = row[colOffset + fi] ? row[colOffset + fi].toString().trim() : '';
+        });
+        items.push(item);
+      }
+    });
+  });
+  return items;
+}
+
+function getRowValues(si, p) {
+  return SECTIONS[si].fields.map(f => p[f] || '');
+}
+
+function findFirstEmptyRow(sheet, col, startRow, lastRow) {
+  if (lastRow < startRow) return startRow;
+  const colData = sheet.getRange(startRow, col, lastRow - startRow + 1, 1).getValues();
+  for (let i = 0; i < colData.length; i++) {
+    if (!colData[i][0] || colData[i][0].toString().trim() === '') return startRow + i;
+  }
+  return startRow + colData.length;
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify(readAllItems())).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const sheet = getSheet();
   const p = JSON.parse(e.postData.contents);
-  if (p.action === 'add')
-    sheet.appendRow([p.name, p.location, p.category, p.quantity, p.notes || '']);
-  if (p.action === 'delete')
-    sheet.deleteRow(p.id);
-  if (p.action === 'update') {
-    const row = p.id;
-    sheet.getRange(row, 1, 1, 5).setValues([[p.name, p.location, p.category, p.quantity, p.notes || '']]);
+  const startCols = getSectionStartCols();
+
+  if (p.action === 'add') {
+    const si = SECTIONS.findIndex(s => s.name === p.location);
+    if (si === -1) return errOut('Unknown location: ' + p.location);
+    const col = startCols[si];
+    const targetRow = findFirstEmptyRow(sheet, col, DATA_START_ROW, sheet.getLastRow());
+    sheet.getRange(targetRow, col, 1, SECTIONS[si].cols).setValues([getRowValues(si, p)]);
   }
-  return ContentService.createTextOutput('ok');
+
+  if (p.action === 'update') {
+    const si = parseInt(p.section);
+    const col = startCols[si];
+    const row = DATA_START_ROW + parseInt(p.rowIndex);
+    sheet.getRange(row, col, 1, SECTIONS[si].cols).setValues([getRowValues(si, p)]);
+  }
+
+  if (p.action === 'delete') {
+    const si = parseInt(p.section);
+    const col = startCols[si];
+    const row = DATA_START_ROW + parseInt(p.rowIndex);
+    sheet.getRange(row, col, 1, SECTIONS[si].cols).clearContent();
+  }
+
+  return ContentService.createTextOutput(JSON.stringify(readAllItems())).setMimeType(ContentService.MimeType.JSON);
+}
+
+function errOut(msg) {
+  return ContentService.createTextOutput(JSON.stringify({ error: msg })).setMimeType(ContentService.MimeType.JSON);
 }</pre>
       </details>
     </div>
@@ -273,8 +357,9 @@ function doPost(e) {
     <!-- Import panel -->
     <div class="panel" id="import-panel">
       <h3>Bulk import</h3>
-      <p>Paste CSV rows from your Google Sheet. Format: <code>Name, Location, Category, Quantity</code> per line.<br>Category options: <code>tools</code> / <code>supplies</code> / <code>equipment</code> / <code>other</code></p>
-      <textarea id="csv-input" placeholder="Power drill, Garage-A3, tools, 1&#10;Paint brushes, Studio-B2, supplies, 12&#10;Generator, Shed-D1, equipment, 1"></textarea>
+      <p>One item per line: <code>Name, Location, SubLocation, Notes</code><br>
+      Location options: <code>UPAC Office</code>, <code>Cage W</code>, <code>Cage X</code>, <code>Cage Y</code>, <code>General Cage</code>, <code>UPAC Room 3410</code></p>
+      <textarea id="csv-input" placeholder="Old Posters, UPAC Office, Filing Cabinet, Rolled up&#10;Extension Cord, Cage W, Shelf 2, 25ft&#10;Generator, General Cage, Shelf 4, Honda 2200W"></textarea>
       <div style="display:flex;gap:8px;">
         <button class="btn-p" onclick="importCSV()">Import</button>
         <button class="btn-g" onclick="togglePanel('import-panel')">Cancel</button>
@@ -282,11 +367,12 @@ function doPost(e) {
       <div class="pmsg" id="import-msg"></div>
     </div>
 
-    <!-- Page header -->
+    <!-- Header -->
     <div class="top-bar">
       <div>
         <div class="pg-title" id="pg-title">All items</div>
-        <div class="pg-sub" id="pg-sub">Your complete inventory</div>
+        <div class="pg-sub" id="pg-sub">UPAC Storage Inventory</div>
+        <div id="loc-badge-wrap"></div>
       </div>
       <div class="top-acts" id="top-acts"></div>
     </div>
@@ -297,41 +383,60 @@ function doPost(e) {
     <!-- Controls -->
     <div class="controls">
       <div class="srch">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" id="search" placeholder="Search items, locations, notes…" oninput="render()"/>
       </div>
-      <select id="filter-cat" onchange="render()">
-        <option value="">All categories</option>
-        <option value="tools">Tools</option>
-        <option value="supplies">Supplies</option>
-        <option value="equipment">Equipment</option>
-        <option value="other">Other</option>
+      <select id="filter-loc" onchange="render()">
+        <option value="">All locations</option>
+        <optgroup label="Storage Cages">
+          <option value="Cage W">Cage W</option>
+          <option value="Cage X">Cage X</option>
+          <option value="Cage Y">Cage Y</option>
+          <option value="General Cage">General Cage</option>
+        </optgroup>
+        <optgroup label="Office">
+          <option value="UPAC Room 3410">UPAC Room 3410</option>
+        </optgroup>
       </select>
     </div>
 
-    <!-- Grid -->
     <div class="grid" id="grid"></div>
   </main>
 </div>
 
-<!-- Add item modal -->
+<!-- Modal -->
 <div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <h2>Add item</h2>
-    <div class="fg"><label>Item name</label><input type="text" id="f-name" placeholder="e.g. Power drill"/></div>
+    <h2 id="modal-title">Add item</h2>
+    <div class="fg">
+      <label>Item name</label>
+      <input type="text" id="f-name" placeholder="e.g. Old UPAC Posters"/>
+    </div>
     <div class="frow">
-      <div class="fg"><label>Location</label><input type="text" id="f-loc" placeholder="e.g. Garage-A3" list="loc-dl"/><datalist id="loc-dl"></datalist></div>
-      <div class="fg"><label>Quantity</label><input type="number" id="f-qty" value="1" min="1"/></div>
+      <div class="fg">
+        <label>Location</label>
+        <select id="f-loc" onchange="updateSubLocField()">
+          <optgroup label="Storage Cages">
+            <option value="Cage W">Cage W</option>
+            <option value="Cage X">Cage X</option>
+            <option value="Cage Y">Cage Y</option>
+            <option value="General Cage">General Cage</option>
+          </optgroup>
+          <optgroup label="Office">
+            <option value="UPAC Room 3410">UPAC Room 3410</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg" id="subloc-wrap">
+        <label id="subloc-label">Shelf</label>
+        <input type="text" id="f-subloc" placeholder="e.g. Shelf 2" list="subloc-dl"/>
+        <datalist id="subloc-dl"></datalist>
+      </div>
     </div>
-    <div class="fg"><label>Category</label>
-      <select id="f-cat">
-        <option value="tools">Tools</option>
-        <option value="supplies">Supplies</option>
-        <option value="equipment">Equipment</option>
-        <option value="other">Other</option>
-      </select>
+    <div class="fg">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Any extra details…"></textarea>
     </div>
-    <div class="fg"><label>Notes (optional)</label><input type="text" id="f-notes" placeholder="Any extra details…"/></div>
     <div class="mactions">
       <button class="btn-g" onclick="closeModal()">Cancel</button>
       <button class="btn-p" onclick="saveItem()">Save item</button>
@@ -340,60 +445,75 @@ function doPost(e) {
 </div>
 
 <script>
-// ══ USERS — edit this list to manage who can log in ════════════════════════
-// role: 'admin'  → can add, edit, delete items
-// role: 'viewer' → read-only, can search and browse
+// ══ USERS ═══════════════════════════════════════════════════════════════════
+// role: 'admin' = add/edit/delete | 'viewer' = read-only
 const USERS = [
   { username: 'admin',  password: 'admin123',  role: 'admin',  name: 'Admin'  },
   { username: 'alice',  password: 'alice123',  role: 'admin',  name: 'Alice'  },
   { username: 'bob',    password: 'bob123',    role: 'viewer', name: 'Bob'    },
   { username: 'viewer', password: 'view123',   role: 'viewer', name: 'Viewer' },
 ];
-// ══════════════════════════════════════════════════════════════════════════
 
+// ══ LOCATION CONFIG ══════════════════════════════════════════════════════════
+const OFFICE_LOCS = ['UPAC Room 3410'];
+const CAGE_LOCS   = ['Cage W', 'Cage X', 'Cage Y', 'General Cage'];
+const ALL_LOCS    = [...CAGE_LOCS, ...OFFICE_LOCS];
+
+// Which locations have a middle field (shelf / sublocation), and what to call it
+const LOC_MIDFIELD = {
+  'Cage W':         'shelf',
+  'UPAC Room 3410': 'sublocation',
+  // Cage X, Cage Y, General Cage have NO middle field
+};
+
+function locType(loc) {
+  return OFFICE_LOCS.includes(loc) ? 'office' : 'cage';
+}
+function hasMidField(loc) { return !!LOC_MIDFIELD[loc]; }
+function midFieldLabel(loc) {
+  return loc === 'UPAC Room 3410' ? 'Sub-location' : 'Shelf';
+}
+
+// ══ STATE ════════════════════════════════════════════════════════════════════
 let currentUser = null;
-let items = JSON.parse(localStorage.getItem('inv_items') || 'null');
-let nextId = parseInt(localStorage.getItem('inv_nextId') || '1');
-let activeLoc = '';
-let sheetUrl = localStorage.getItem('inv_sheet_url') || '';
+let items = JSON.parse(localStorage.getItem('upac_items') || 'null');
+let nextId = parseInt(localStorage.getItem('upac_nextId') || '1');
+let sheetUrl = localStorage.getItem('upac_sheet_url') || '';
+let filterLoc = '';   // sidebar location filter
+let filterSubloc = ''; // (unused for now, reserved)
 
-// Seed sample data on first load
 if (!items) {
   items = [
-    {id:1,name:'Power drill',location:'Garage-A3',category:'tools',quantity:1,notes:'Cordless 18V'},
-    {id:2,name:'Hammer',location:'Garage-A1',category:'tools',quantity:3,notes:''},
-    {id:3,name:'Paint brushes',location:'Studio-B2',category:'supplies',quantity:12,notes:'Assorted sizes'},
-    {id:4,name:'Extension cord',location:'Basement-C1',category:'equipment',quantity:2,notes:'25ft each'},
-    {id:5,name:'Sandpaper',location:'Garage-A2',category:'supplies',quantity:20,notes:'Mixed grits'},
-    {id:6,name:'Generator',location:'Shed-D1',category:'equipment',quantity:1,notes:'Honda 2200W'},
-    {id:7,name:'Tape measure',location:'Garage-A1',category:'tools',quantity:2,notes:''},
-    {id:8,name:'WD-40',location:'Basement-C2',category:'supplies',quantity:4,notes:''},
+    {id:'0_0', section:0, rowIndex:0, name:'Extension Cord',    location:'Cage W',         shelf:'Shelf 2',       note:'25ft'},
+    {id:'0_1', section:0, rowIndex:1, name:'Folding Chairs',    location:'Cage W',         shelf:'Shelf 1',       note:'10 total'},
+    {id:'1_0', section:1, rowIndex:0, name:'Folding Tables',    location:'Cage X',         note:'6 total'},
+    {id:'2_0', section:2, rowIndex:0, name:'Traffic Cones',     location:'Cage Y',         note:''},
+    {id:'3_0', section:3, rowIndex:0, name:'Generator',         location:'General Cage',   note:'Honda 2200W'},
+    {id:'4_0', section:4, rowIndex:0, name:'Old UPAC Files',    location:'UPAC Room 3410', sublocation:'Filing Cabinet', note:''},
+    {id:'4_1', section:4, rowIndex:1, name:'Props',             location:'UPAC Room 3410', sublocation:'Filing Cabinet', note:'In Filing Cabinet'},
+    {id:'4_2', section:4, rowIndex:2, name:'AV Equipment',      location:'UPAC Room 3410', sublocation:'Cabinet',        note:'Projector + cables'},
   ];
-  nextId = 9;
+  nextId = 100;
   saveLocal();
 }
 
 // Restore session
-const saved = sessionStorage.getItem('inv_user');
-if (saved) { currentUser = JSON.parse(saved); showApp(); }
+const _saved = sessionStorage.getItem('upac_user');
+if (_saved) { currentUser = JSON.parse(_saved); showApp(); }
 
-// ── AUTH ─────────────────────────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────────────────────────────
 function doLogin() {
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value;
   const match = USERS.find(x => x.username === u && x.password === p);
-  if (!match) {
-    document.getElementById('login-err').textContent = 'Incorrect username or password.';
-    return;
-  }
+  if (!match) { document.getElementById('login-err').textContent = 'Incorrect username or password.'; return; }
   currentUser = match;
-  sessionStorage.setItem('inv_user', JSON.stringify(match));
+  sessionStorage.setItem('upac_user', JSON.stringify(match));
   document.getElementById('login-screen').classList.add('hidden');
   showApp();
 }
-
 function doLogout() {
-  sessionStorage.removeItem('inv_user');
+  sessionStorage.removeItem('upac_user');
   currentUser = null;
   document.getElementById('app').classList.remove('visible');
   document.getElementById('login-screen').classList.remove('hidden');
@@ -401,191 +521,205 @@ function doLogout() {
   document.getElementById('l-pass').value = '';
   document.getElementById('login-err').textContent = '';
 }
-
 function showApp() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.add('visible');
   document.getElementById('sb-av').textContent = currentUser.name[0];
-  document.getElementById('sb-uname').textContent = currentUser.name;
-  document.getElementById('sb-urole').textContent = currentUser.role;
+  document.getElementById('sb-un').textContent = currentUser.name;
+  document.getElementById('sb-ur').textContent = currentUser.role;
   buildActions();
   if (sheetUrl) { setSync('on','Sheet connected'); fetchSheet(); }
   render();
 }
-
+function isAdmin() { return currentUser && currentUser.role === 'admin'; }
 function buildActions() {
-  const el = document.getElementById('top-acts');
-  el.innerHTML = isAdmin()
+  document.getElementById('top-acts').innerHTML = isAdmin()
     ? `<button class="btn-g" onclick="togglePanel('import-panel')">Import CSV</button>
        <button class="btn-p" onclick="openModal()">+ Add item</button>`
     : `<span class="view-tag">View only</span>`;
 }
 
-function isAdmin() { return currentUser && currentUser.role === 'admin'; }
-
-// ── LOCAL STORAGE ────────────────────────────────────────────────────────
+// ── STORAGE ───────────────────────────────────────────────────────────────────
 function saveLocal() {
-  localStorage.setItem('inv_items', JSON.stringify(items));
-  localStorage.setItem('inv_nextId', String(nextId));
+  localStorage.setItem('upac_items', JSON.stringify(items));
+  localStorage.setItem('upac_nextId', String(nextId));
 }
 
-// ── GOOGLE SHEETS ────────────────────────────────────────────────────────
+// ── SHEETS ────────────────────────────────────────────────────────────────────
 function setSync(state, label) {
   const dot = document.getElementById('sync-dot');
-  dot.className = 'dot' + (state==='on' ? ' on' : state==='pulse' ? ' pulse' : '');
+  dot.className = 'dot' + (state==='on'?' on':state==='pulse'?' pulse':'');
   document.getElementById('sync-lbl').textContent = label;
 }
 
 async function fetchSheet() {
-  setSync('pulse', 'Syncing…');
+  setSync('pulse','Syncing…');
   try {
     const res = await fetch(sheetUrl + '?t=' + Date.now());
     const data = await res.json();
-    items = data.map(r => ({
-      id: r.id,
-      name: String(r.name || ''),
-      location: String(r.location || ''),
-      category: String(r.category || 'other'),
-      quantity: parseInt(r.quantity) || 1,
-      notes: String(r.notes || '')
-    }));
-    saveLocal();
-    setSync('on', 'Sheet connected');
+    applySheetData(data);
+    setSync('on','Sheet connected');
     render();
-  } catch(e) {
-    setSync('', 'Sync failed — check URL');
-  }
+  } catch(e) { setSync('','Sync failed'); }
 }
 
-async function connectSheet() {
-  const url = document.getElementById('sheet-url').value.trim();
-  const msg = document.getElementById('setup-msg');
-  if (!url) { showMsg(msg, 'Please enter a URL.', 'err'); return; }
-  setSync('pulse', 'Connecting…');
-  try {
-    const res = await fetch(url + '?t=' + Date.now());
-    const data = await res.json();
-    sheetUrl = url;
-    localStorage.setItem('inv_sheet_url', url);
-    items = data.map(r => ({
-      id: r.id, name: String(r.name||''), location: String(r.location||''),
-      category: String(r.category||'other'), quantity: parseInt(r.quantity)||1, notes: String(r.notes||'')
-    }));
-    saveLocal();
-    setSync('on', 'Sheet connected');
-    showMsg(msg, `Connected! Loaded ${items.length} items.`, 'ok');
-    render();
-  } catch(e) {
-    setSync('', 'Connection failed');
-    showMsg(msg, 'Could not connect. Make sure: (1) deployed as Web App, (2) "Who has access" = Anyone, (3) you copied the /exec URL.', 'err');
-  }
+function applySheetData(data) {
+  items = data.map(r => ({
+    id:         r.id,
+    section:    r.section,
+    rowIndex:   r.rowIndex,
+    name:       String(r.name       || ''),
+    location:   String(r.location   || ''),
+    shelf:      String(r.shelf      || ''),
+    sublocation:String(r.sublocation|| ''),
+    note:       String(r.note       || '')
+  }));
+  saveLocal();
 }
 
 async function sheetWrite(action, payload) {
-  if (!sheetUrl) return null;
+  if (!sheetUrl) return;
+  setSync('pulse','Saving…');
   try {
-    setSync('pulse', 'Saving…');
     const res = await fetch(sheetUrl, {
       method: 'POST',
       body: JSON.stringify({ action, ...payload }),
       headers: { 'Content-Type': 'text/plain' }
     });
     const updated = await res.json();
-    // Sheet returns fresh data — update local state from it
-    items = updated.map(r => ({
-      id: r.id,
-      name: String(r.name || ''),
-      location: String(r.location || ''),
-      category: String(r.category || 'other'),
-      quantity: parseInt(r.quantity) || 1,
-      notes: String(r.notes || '')
-    }));
-    saveLocal();
-    setSync('on', 'Sheet connected');
-    return true;
+    applySheetData(updated);
+    setSync('on','Sheet connected');
+    render();
   } catch(e) {
-    setSync('', 'Save failed — check connection');
-    console.warn('Sheet write failed', e);
-    return false;
+    setSync('','Save failed');
+    console.warn('Sheet write error', e);
   }
 }
 
-// ── RENDER ───────────────────────────────────────────────────────────────
-function locCounts() {
-  const c = {};
-  items.forEach(i => { c[i.location] = (c[i.location] || 0) + 1; });
-  return c;
+async function connectSheet() {
+  const url = document.getElementById('sheet-url').value.trim();
+  const msg = document.getElementById('setup-msg');
+  if (!url) { showMsg(msg,'Enter a URL first.','err'); return; }
+  setSync('pulse','Connecting…');
+  try {
+    const res = await fetch(url + '?t=' + Date.now());
+    const data = await res.json();
+    sheetUrl = url;
+    localStorage.setItem('upac_sheet_url', url);
+    applySheetData(data);
+    setSync('on','Sheet connected');
+    showMsg(msg, `Connected! Loaded ${items.length} items.`, 'ok');
+    render();
+  } catch(e) {
+    setSync('','Connection failed');
+    showMsg(msg,'Could not connect. Make sure the script is deployed as a Web App with "Anyone" access and you\'ve copied the /exec URL.','err');
+  }
 }
 
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function getFiltered() {
   const q = (document.getElementById('search')?.value || '').toLowerCase();
-  const cat = document.getElementById('filter-cat')?.value || '';
+  const locFilter = document.getElementById('filter-loc')?.value || filterLoc;
   return items.filter(i =>
-    (!activeLoc || i.location === activeLoc) &&
-    (!q || i.name.toLowerCase().includes(q) || i.location.toLowerCase().includes(q) || (i.notes||'').toLowerCase().includes(q)) &&
-    (!cat || i.category === cat)
+    (!locFilter || i.location === locFilter) &&
+    (!q || i.name.toLowerCase().includes(q)
+        || i.location.toLowerCase().includes(q)
+        || i.sublocation.toLowerCase().includes(q)
+        || (i.notes||'').toLowerCase().includes(q))
   );
+}
+
+function buildSidebar() {
+  document.getElementById('cnt-all').textContent = items.length;
+
+  // Office nav
+  const officeNav = document.getElementById('nav-office');
+  officeNav.innerHTML = OFFICE_LOCS.map(loc => {
+    const cnt = items.filter(i => i.location === loc).length;
+    return `<button class="sb-btn${filterLoc===loc?' active':''}" onclick="setFilter('${loc}','',this)" data-loc="${loc}">
+      ${loc} <span class="sb-cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+
+  // Cage nav
+  const cageNav = document.getElementById('nav-cages');
+  cageNav.innerHTML = CAGE_LOCS.map(loc => {
+    const cnt = items.filter(i => i.location === loc).length;
+    return `<button class="sb-btn${filterLoc===loc?' active':''}" onclick="setFilter('${loc}','',this)" data-loc="${loc}">
+      ${loc} <span class="sb-cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+
+  // Subloc datalist
+  const sublocSet = new Set(items.map(i => i.sublocation).filter(Boolean));
+  document.getElementById('subloc-dl').innerHTML = [...sublocSet].sort().map(s=>`<option value="${s}">`).join('');
 }
 
 function render() {
   if (!currentUser) return;
-  const locs = locCounts();
-  document.getElementById('cnt-all').textContent = items.length;
-  document.getElementById('loc-nav').innerHTML = Object.entries(locs).sort().map(([loc,cnt]) =>
-    `<button class="sb-btn${activeLoc===loc?' active':''}" onclick="setLoc('${loc}')" data-loc="${loc}">
-      ${loc}<span class="sb-cnt">${cnt}</span>
-    </button>`
-  ).join('');
-  document.getElementById('loc-dl').innerHTML = Object.keys(locs).sort().map(l=>`<option value="${l}">`).join('');
-
+  buildSidebar();
   const f = getFiltered();
-  const allLocs = Object.keys(locs).length;
-  const allCats = new Set(items.map(i=>i.category)).size;
 
   document.getElementById('stats').innerHTML = `
     <div class="stat"><div class="stat-lbl">Items</div><div class="stat-val">${items.length}</div></div>
-    <div class="stat"><div class="stat-lbl">Locations</div><div class="stat-val">${allLocs}</div></div>
-    <div class="stat"><div class="stat-lbl">Categories</div><div class="stat-val">${allCats}</div></div>
+    <div class="stat"><div class="stat-lbl">Locations</div><div class="stat-val">${new Set(items.map(i=>i.location)).size}</div></div>
+    <div class="stat"><div class="stat-lbl">Sub-locations</div><div class="stat-val">${new Set(items.map(i=>i.sublocation).filter(Boolean)).size}</div></div>
     <div class="stat"><div class="stat-lbl">Showing</div><div class="stat-val">${f.length}</div></div>`;
 
-  document.getElementById('grid').innerHTML = f.length ? f.map(item => `
-    <div class="card">
-      ${isAdmin() ? `<div class="card-actions"><button class="edt" onclick="openEditModal(${item.id})" title="Edit">✎</button><button class="del" onclick="deleteItem(${item.id})" title="Delete">×</button></div>` : ''}
-      <div class="c-name" style="padding-right:${isAdmin()?'54px':'4px'}">${item.name}</div>
-      <div class="c-loc">${item.location}</div>
-      <div class="c-foot">
-        <span class="pill p-${item.category}">${item.category}</span>
-        <span class="c-qty">×${item.quantity}</span>
+  document.getElementById('grid').innerHTML = f.length ? f.map(item => {
+    const type = locType(item.location);
+    const midVal = item.location === 'UPAC Room 3410' ? item.sublocation : item.shelf;
+    return `<div class="card ${type}-card">
+      <div class="card-top">
+        <div class="c-name">${item.name}</div>
+        ${isAdmin() ? `<div class="card-acts">
+          <button class="edt" onclick="openEditModal('${item.id}')" title="Edit">✎</button>
+          <button class="del" onclick="deleteItem('${item.id}')" title="Delete">×</button>
+        </div>` : ''}
       </div>
-      ${item.notes ? `<div class="c-notes">${item.notes}</div>` : ''}
-    </div>`).join('')
-  : `<div class="empty"><p style="font-size:15px;">No items found</p></div>`;
+      <div class="c-loc">
+        <div class="loc-dot ${type}"></div>
+        <span class="c-loc-name">${item.location}</span>
+      </div>
+      ${midVal ? `<div class="c-subloc">${midVal}</div>` : ''}
+      ${item.note ? `<div class="c-notes">${item.note}</div>` : ''}
+    </div>`;
+  }).join('') : `<div class="empty"><p>No items found</p></div>`;
 
-  document.getElementById('pg-title').textContent = activeLoc || 'All items';
-  document.getElementById('pg-sub').textContent = activeLoc
-    ? `${f.length} item${f.length!==1?'s':''} in ${activeLoc}`
-    : 'Your complete inventory';
+  // Page title + badge
+  const title = filterLoc || 'All items';
+  document.getElementById('pg-title').textContent = title;
+  document.getElementById('pg-sub').textContent = filterLoc
+    ? `${f.length} item${f.length!==1?'s':''} · UPAC Storage`
+    : `${items.length} items across all locations`;
+  const type = filterLoc ? locType(filterLoc) : null;
+  document.getElementById('loc-badge-wrap').innerHTML = type
+    ? `<span class="loc-badge ${type}">${type === 'office' ? '🏢 Office' : '📦 Cage'}</span>` : '';
 }
 
-function setLoc(loc) {
-  activeLoc = loc;
-  document.querySelectorAll('.sb-btn[data-loc]').forEach(el =>
-    el.classList.toggle('active', el.dataset.loc === loc));
+function setFilter(loc, subloc, btn) {
+  filterLoc = loc;
+  // Sync the dropdown
+  const sel = document.getElementById('filter-loc');
+  if (sel) sel.value = loc;
+  // Active state on all buttons
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
   render();
 }
 
-// ── CRUD ─────────────────────────────────────────────────────────────────
+// ── CRUD ──────────────────────────────────────────────────────────────────────
 let editingId = null;
 
 function openModal() {
   if (!isAdmin()) return;
   editingId = null;
-  document.querySelector('#modal h2').textContent = 'Add item';
+  document.getElementById('modal-title').textContent = 'Add item';
   document.getElementById('f-name').value = '';
-  document.getElementById('f-loc').value = activeLoc || '';
-  document.getElementById('f-qty').value = 1;
-  document.getElementById('f-cat').value = 'tools';
+  document.getElementById('f-loc').value = filterLoc || 'Cage W';
+  document.getElementById('f-subloc').value = '';
   document.getElementById('f-notes').value = '';
+  updateSubLocField();
   document.getElementById('modal').classList.add('open');
   setTimeout(() => document.getElementById('f-name').focus(), 100);
 }
@@ -595,12 +729,13 @@ function openEditModal(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   editingId = id;
-  document.querySelector('#modal h2').textContent = 'Edit item';
+  document.getElementById('modal-title').textContent = 'Edit item';
   document.getElementById('f-name').value = item.name;
   document.getElementById('f-loc').value = item.location;
-  document.getElementById('f-qty').value = item.quantity;
-  document.getElementById('f-cat').value = item.category;
-  document.getElementById('f-notes').value = item.notes || '';
+  document.getElementById('f-subloc').value =
+    item.location === 'UPAC Room 3410' ? (item.sublocation || '') : (item.shelf || '');
+  document.getElementById('f-notes').value = item.note || '';
+  updateSubLocField();
   document.getElementById('modal').classList.add('open');
   setTimeout(() => document.getElementById('f-name').focus(), 100);
 }
@@ -610,35 +745,52 @@ function closeModal() {
   editingId = null;
 }
 
+function updateSubLocField() {
+  const loc = document.getElementById('f-loc').value;
+  const wrap = document.getElementById('subloc-wrap');
+  const label = document.getElementById('subloc-label');
+  const input = document.getElementById('f-subloc');
+  if (hasMidField(loc)) {
+    wrap.style.display = '';
+    label.textContent = midFieldLabel(loc);
+    input.placeholder = loc === 'UPAC Room 3410'
+      ? 'e.g. Filing Cabinet, Under Table, Desk'
+      : 'e.g. Shelf 1, Shelf 2, Shelf 3, Shelf 4';
+  } else {
+    wrap.style.display = 'none';
+    input.value = '';
+  }
+}
+
 async function saveItem() {
   if (!isAdmin()) return;
   const name = document.getElementById('f-name').value.trim();
-  const location = document.getElementById('f-loc').value.trim();
-  if (!name || !location) { alert('Name and location are required.'); return; }
+  const location = document.getElementById('f-loc').value;
+  if (!name) { alert('Item name is required.'); return; }
+  const midVal = document.getElementById('f-subloc').value.trim();
   const fields = {
     name, location,
-    category: document.getElementById('f-cat').value,
-    quantity: parseInt(document.getElementById('f-qty').value) || 1,
-    notes: document.getElementById('f-notes').value.trim()
+    shelf:       location === 'Cage W'         ? midVal : '',
+    sublocation: location === 'UPAC Room 3410' ? midVal : '',
+    note:        document.getElementById('f-notes').value.trim()
   };
-
-  // Optimistically update local state first so UI feels instant
+  // Optimistic local update
   if (editingId !== null) {
     const idx = items.findIndex(i => i.id === editingId);
     if (idx !== -1) items[idx] = { ...items[idx], ...fields };
   } else {
-    items.push({ id: nextId++, ...fields });
+    items.push({ id: 'new_' + Date.now(), section: -1, rowIndex: -1, ...fields });
   }
   saveLocal();
   closeModal();
   render();
-
-  // Then sync to sheet — sheet response overwrites local with authoritative data
   if (sheetUrl) {
-    const action = editingId !== null ? 'update' : 'add';
-    const payload = editingId !== null ? { id: editingId, ...fields } : fields;
-    await sheetWrite(action, payload);
-    render(); // re-render with sheet's confirmed data
+    if (editingId !== null) {
+      const item = items.find(i => i.id === editingId) || {};
+      await sheetWrite('update', { section: item.section, rowIndex: item.rowIndex, ...fields });
+    } else {
+      await sheetWrite('add', fields);
+    }
   }
 }
 
@@ -646,43 +798,35 @@ async function deleteItem(id) {
   if (!isAdmin()) return;
   if (!confirm('Remove this item?')) return;
   const item = items.find(i => i.id === id);
-  // Optimistic local delete
   items = items.filter(i => i.id !== id);
   saveLocal();
   render();
-  // Sync to sheet
-  if (sheetUrl && item) {
-    await sheetWrite('delete', { id: item.id });
-    render();
-  }
+  if (sheetUrl && item) await sheetWrite('delete', { section: item.section, rowIndex: item.rowIndex });
 }
 
-// ── IMPORT ────────────────────────────────────────────────────────────────
+// ── IMPORT ────────────────────────────────────────────────────────────────────
 function importCSV() {
   if (!isAdmin()) return;
   const raw = document.getElementById('csv-input').value.trim();
   const msg = document.getElementById('import-msg');
   if (!raw) return;
-  const valid = ['tools','supplies','equipment','other'];
   let count = 0;
   raw.split('\n').forEach(line => {
-    const [name, location, category, qty] = line.split(',').map(s => s.trim());
-    if (name && location) {
-      items.push({
-        id: nextId++, name, location,
-        category: valid.includes((category||'').toLowerCase()) ? category.toLowerCase() : 'other',
-        quantity: parseInt(qty) || 1, notes: ''
-      });
+    const parts = line.split(',').map(s => s.trim());
+    const [name, location, sublocation, ...notesParts] = parts;
+    const notes = notesParts.join(',').trim();
+    if (name) {
+      items.push({ id: nextId++, name, location: location || 'UPAC Office', sublocation: sublocation || '', notes: notes || '' });
       count++;
     }
   });
   saveLocal();
   render();
   document.getElementById('csv-input').value = '';
-  showMsg(msg, `Imported ${count} item${count!==1?'s':''}.`, 'ok');
+  showMsg(document.getElementById('import-msg'), `Imported ${count} item${count!==1?'s':''}.`, 'ok');
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────────────────────────
 function togglePanel(id) { document.getElementById(id).classList.toggle('open'); }
 function showMsg(el, text, type) {
   el.textContent = text;
